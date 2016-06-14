@@ -1,5 +1,5 @@
 $(function() {
-	//解决jQuery从1.9 版开始，移除了 $.browser的问题。 
+	//解决jQuery从1.9 版开始，移除了$.browser的问题。 
 	(function(jQuery) {
 		if (jQuery.browser)
 			return;

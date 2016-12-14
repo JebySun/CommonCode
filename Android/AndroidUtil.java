@@ -230,20 +230,6 @@ public class AndroidUtil {
 		}
 	}
 	
-	
-	    /**
-     * 尝试用迅雷下载
-     * @param fileUrl
-     */
-    private void tryDownloadByThunder(String fileUrl) {
-        //判断是否安装迅雷
-        boolean installed = hasInstalledApp(this, "com.xunlei.downloadprovider");
-        if (installed) {
-            downloadByThunder(fileUrl);
-        } else {
-            Toast.makeText(this, "请先安装迅雷", Toast.LENGTH_SHORT).show();
-        }
-    }
 
 
 

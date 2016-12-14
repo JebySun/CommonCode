@@ -231,6 +231,87 @@ public class AndroidUtil {
 	}
 	
 	
+	    /**
+     * 尝试用迅雷下载
+     * @param fileUrl
+     */
+    private void tryDownloadByThunder(String fileUrl) {
+        //判断是否安装迅雷
+        boolean installed = hasInstalledApp(this, "com.xunlei.downloadprovider");
+        if (installed) {
+            downloadByThunder(fileUrl);
+        } else {
+            Toast.makeText(this, "请先安装迅雷", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+
+    /**
+     * 判断是否安装某个应用
+     */
+    public static boolean hasInstalledApp(Context context, String packageName) {
+        PackageManager packageManager = context.getPackageManager();
+        List<PackageInfo> pkgInfoList = packageManager.getInstalledPackages(0);
+        if (pkgInfoList != null) {
+            for (PackageInfo pkgInfo : pkgInfoList) {
+                if (packageName.equals(pkgInfo.packageName)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 调用迅雷客户端下载
+     */
+    public static void downloadByThunder(String fileUrl) {
+        Uri uri = Uri.parse(fileUrl);
+        Intent it = new Intent(Intent.ACTION_VIEW, uri);
+        it.addCategory(Intent.CATEGORY_BROWSABLE);
+        it.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        try {
+            startActivity(it);
+        } catch (ActivityNotFoundException e) {
+            Log.e("===Acitivity没有找到====", "e");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 调用迅雷V5.17下载
+     */
+    public static void downloadByThunderV5_17(String fileUrl) {
+        Uri uri = Uri.parse(fileUrl);
+        Intent it = new Intent(Intent.ACTION_VIEW, uri);
+        it.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        ComponentName cn = new ComponentName("com.xunlei.downloadprovider", "com.xunlei.downloadprovider.bho.ScanCodeResultActivity");
+        it.setComponent(cn);
+        try {
+            startActivity(it);
+        } catch (ActivityNotFoundException e) {
+            Log.e("===Acitivity没有找到====", "e");
+            e.printStackTrace();
+        }
+    }
+    /**
+     * 调用迅雷V5.28下载
+     */
+    public static void downloadByThunderV5_28(String fileUrl) {
+        Uri uri = Uri.parse(fileUrl);
+        Intent it = new Intent(Intent.ACTION_VIEW, uri);
+        it.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        ComponentName cn = new ComponentName("com.xunlei.downloadprovider", "com.xunlei.downloadprovider.launch.dispatch.mocklink.LinkScanCodeResultActivity");
+        it.setComponent(cn);
+        try {
+            startActivity(it);
+        } catch (ActivityNotFoundException e) {
+            Log.e("===Acitivity没有找到====", "e");
+            e.printStackTrace();
+        }
+    }
+	
 }
 
 

@@ -47,7 +47,56 @@ public class AndroidUtil {
 	public static int px2dp(Context context, float px) {  
 	    float scale = context.getResources().getDisplayMetrics().density;  
 	    return (int) (px / scale + 0.5f);  
-	}  
+	} 
+
+	/**
+	 * sp转换为px
+	 * @param context
+	 * @param px
+	 * @return
+	 */
+    public static int sp2px(Context context, float spValue) {
+        float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
+        return (int) (spValue * fontScale + 0.5f);
+    }
+	/**
+	 * px转换为sp
+	 * @param context
+	 * @param px
+	 * @return
+	 */
+    public static int px2sp(Context context, float pxValue) {
+        final float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
+        return (int) (pxValue / fontScale + 0.5f);
+    }
+
+    /**
+     * 兼容方式获取颜色资源
+     * @param context
+     * @param colorResId
+     * @return
+     */
+    @SuppressWarnings("deprecation")
+    public static int getColor(Context context, int colorResId) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return context.getColor(colorResId);
+        }
+        return context.getResources().getColor(colorResId);
+    }
+
+    /**
+     * 兼容方式获取Drawable资源
+     * @param context
+     * @param drawableResId
+     * @return
+     */
+    @SuppressWarnings("deprecation")
+    public static Drawable getDrawable(Context context, int drawableResId) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return context.getDrawable(drawableResId);
+        }
+        return context.getResources().getDrawable(drawableResId);
+    }	
 	
 
 	/**
@@ -206,7 +255,6 @@ public class AndroidUtil {
 	    	view.setBackground(drawable);  
 	    }
 	    
-	    saveMyBitmap("/storage/emulated/0/1024/1.png", overlay);
 	}
 	
 	/**
@@ -309,6 +357,61 @@ public class AndroidUtil {
         } catch (ActivityNotFoundException e) {
             Log.e("===Acitivity没有找到====", "e");
             e.printStackTrace();
+        }
+    }
+	
+	 /**
+     * 获取状态栏高度(px)
+     *
+     * @param context context
+     * @return 状态栏高度
+     */
+    public static int getStatusBarHeight(Context context) {
+        int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
+        return context.getResources().getDimensionPixelSize(resourceId);
+    }
+
+    /**
+     * 设置状态栏样式
+     * @param activity
+     * @param colorId 颜色资源Id
+     * @param fitsSysWindows Activity布局是否让出状态栏位置
+     */
+    public static void setScreenStatusBar(Activity activity, int colorId, boolean fitsSysWindows) {
+        Window window = activity.getWindow();
+        int color = activity.getResources().getColor(colorId);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+                    | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            //设置状态栏颜色
+            window.setStatusBarColor(color);
+            //设置导航栏颜色
+            window.setNavigationBarColor(color);
+            ViewGroup contentView = ((ViewGroup) activity.findViewById(android.R.id.content));
+            View childAt = contentView.getChildAt(0);
+            if (childAt != null) {
+                childAt.setFitsSystemWindows(fitsSysWindows);
+            }
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            //透明状态栏
+            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            //透明导航栏
+            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            //设置contentview为fitsSystemWindows
+            ViewGroup contentView = (ViewGroup) activity.findViewById(android.R.id.content);
+            View childAt = contentView.getChildAt(0);
+            if (childAt != null) {
+                childAt.setFitsSystemWindows(fitsSysWindows);
+            }
+            //给statusbar着色
+            View view = new View(activity);
+            view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, getStatusBarHeight(activity)));
+            view.setBackgroundColor(color);
+            contentView.addView(view);
         }
     }
 	
